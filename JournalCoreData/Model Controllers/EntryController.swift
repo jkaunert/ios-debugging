@@ -9,9 +9,14 @@
 import Foundation
 import CoreData
 
-let baseURL = URL(string: "https://journal-syncing.firebaseio.com/")!
+let baseURL = URL(string: "https://ios-debugging-5720d.firebaseio.com/")!
+//let baseURL = URL(string: "https://journal-syncing.firebaseio.com/")!
 
 class EntryController {
+    
+//    init(){
+//        fetchEntriesFromServer()
+//    }
     
     func createEntry(with title: String, bodyText: String, mood: String) {
         
@@ -29,6 +34,7 @@ class EntryController {
         entry.timestamp = Date()
         entry.mood = mood
         
+        
         put(entry: entry)
         
         saveToPersistentStore()
@@ -44,9 +50,11 @@ class EntryController {
     private func put(entry: Entry, completion: @escaping ((Error?) -> Void) = { _ in }) {
         
         let identifier = entry.identifier ?? UUID().uuidString
-        let requestURL = baseURL.appendingPathComponent(identifier).appendingPathComponent("json")
+        let requestURL = baseURL.appendingPathComponent(identifier).appendingPathExtension("json")
+        
         var request = URLRequest(url: requestURL)
         request.httpMethod = "PUT"
+      
         
         do {
             request.httpBody = try JSONEncoder().encode(entry)
@@ -64,6 +72,7 @@ class EntryController {
             }
             
             completion(nil)
+            return
         }.resume()
     }
     
@@ -90,7 +99,7 @@ class EntryController {
         }.resume()
     }
     
-    func fetchEntriesFromServer(completion: @escaping ((Error?) -> Void) = { _ in }) {
+    public func fetchEntriesFromServer(completion: @escaping ((Error?) -> Void) = { _ in }) {
         
         let requestURL = baseURL.appendingPathExtension("json")
         
@@ -136,14 +145,18 @@ class EntryController {
         guard let identifier = identifier else { return nil }
         
         let fetchRequest: NSFetchRequest<Entry> = Entry.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "identfier == %@", identifier)
+        fetchRequest.predicate = NSPredicate(format: "identifier == %@", identifier)
         
         var result: Entry? = nil
-        do {
-            result = try context.fetch(fetchRequest).first
-        } catch {
-            NSLog("Error fetching single entry: \(error)")
-        }
+        
+       
+            do {
+                result = try context.fetch(fetchRequest).first
+                print(result)
+            } catch {
+                NSLog("Error fetching single entry: \(error)")
+            }
+       
         return result
     }
     

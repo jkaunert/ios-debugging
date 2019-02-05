@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class EntryDetailViewController: UIViewController {
     override func viewDidLoad() {
@@ -37,7 +38,7 @@ class EntryDetailViewController: UIViewController {
         } else {
             entryController?.createEntry(with: title, bodyText: bodyText, mood: mood)
         }
-        self.navigationController?.popViewController(animated: true)
+        //self.navigationController?.popViewController(animated: true)
     }
     
     private func updateViews() {
